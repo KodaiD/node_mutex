@@ -130,5 +130,24 @@ class TestNodeMutex {
         mutex.UnlockX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.xlock_ == 0);
-    } 
+    }
+
+    static void TestUpgradeAndDowngrade() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.LockSIX();
+        mutex.UpgradeToX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.xlock_ == 1);
+        mutex.UnlockX();
+        mutex.LockS();
+        assert(mutex.TryUpgradeFromSToX());
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.xlock_ == 1);
+        mutex.DowngradeFromXToS();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.slock_ == 1);
+        mutex.UnlockS();
+    }
 };

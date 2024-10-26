@@ -51,5 +51,7 @@ int main() {
     TestNodeMutex::TestTryLockSIXwithVer();
     TestNodeMutex::TestTryLockXwithVer();
 
+    TestNodeMutex::TestUpgradeAndDowngrade();
+
     std::cout << "TEST PASSED." << std::endl;
 }
