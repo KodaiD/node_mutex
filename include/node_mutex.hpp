@@ -3,7 +3,7 @@
 #include <atomic>
 
 class NodeMutex {
-  public:
+  private:
     struct LockWord {
         union {
             uint64_t obj_;
