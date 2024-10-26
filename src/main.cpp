@@ -52,6 +52,7 @@ int main() {
     TestNodeMutex::TestTryLockXwithVer();
 
     TestNodeMutex::TestUpgradeAndDowngrade();
+    TestNodeMutex::TestGetVersionAndHasSameVersion();
 
     std::cout << "TEST PASSED." << std::endl;
 }

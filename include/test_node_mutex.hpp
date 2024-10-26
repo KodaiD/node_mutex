@@ -150,4 +150,23 @@ class TestNodeMutex {
         assert(lock_word.slock_ == 1);
         mutex.UnlockS();
     }
+
+    static void TestGetVersionAndHasSameVersion() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.LockS();
+        assert(mutex.GetVersion() == 0);
+        mutex.LockSIX();
+        assert(mutex.GetVersion() == 0);
+        mutex.UnlockS();
+        mutex.UnlockSIX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(mutex.HasSameVersion(0));
+        mutex.LockX();
+        mutex.UnlockX();
+        lock_word.obj_ = 0;
+        lock_word.version_++;
+        assert(mutex.HasSameVersion(lock_word.obj_));
+    }
 };
