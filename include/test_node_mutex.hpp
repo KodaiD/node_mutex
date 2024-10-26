@@ -47,4 +47,46 @@ class TestNodeMutex {
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.xlock_ == 0);
     }
+
+    static void TestTryLockS() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.TryLockS();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.slock_ == 1);
+        mutex.TryLockS();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.slock_ == 2);
+        mutex.UnlockS();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.slock_ == 1);
+        mutex.UnlockS();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.slock_ == 0);
+    }
+
+    static void TestTryLockSIX() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.TryLockSIX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.sixlock_ == 1);
+        mutex.UnlockSIX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.sixlock_ == 0);
+    }
+
+    static void TestTryLockX() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.TryLockX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.xlock_ == 1);
+        mutex.UnlockX();
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.xlock_ == 0);
+    } 
 };

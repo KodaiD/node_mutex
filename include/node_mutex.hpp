@@ -100,7 +100,7 @@ class NodeMutex {
                 return false;
             }
             desired.obj_ = expected.obj_;
-            desired.xlock_ = 1;
+            desired.sixlock_ = 1;
             if (lock_word_.compare_exchange_weak(expected.obj_, desired.obj_, std::memory_order_acquire)) {
                 return true;
             }
