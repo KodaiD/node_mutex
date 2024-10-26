@@ -47,5 +47,9 @@ int main() {
     TestNodeMutex::TestTryLockSIX();
     TestNodeMutex::TestTryLockX();
 
+    TestNodeMutex::TestTryLockSwithVer();
+    TestNodeMutex::TestTryLockSIXwithVer();
+    TestNodeMutex::TestTryLockXwithVer();
+
     std::cout << "TEST PASSED." << std::endl;
 }
