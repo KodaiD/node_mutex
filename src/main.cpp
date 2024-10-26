@@ -1,4 +1,4 @@
-#include "node_mutex.hpp"
+#include "test_node_mutex.hpp"
 
 #include <iostream>
 
@@ -38,6 +38,10 @@ int main() {
     }
 
     mutex.UnlockX();
+
+    TestNodeMutex::TestLockS();
+    TestNodeMutex::TestLockSIX();
+    TestNodeMutex::TestLockX();
 
     std::cout << "TEST PASSED." << std::endl;
 }

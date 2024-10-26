@@ -1,9 +1,15 @@
 #pragma once
 
+
+
 #include <atomic>
+
+class TestNodeMutex;
 
 class NodeMutex {
   private:
+    friend TestNodeMutex;
+
     struct LockWord {
         union {
             uint64_t obj_;
@@ -48,7 +54,7 @@ class NodeMutex {
                 continue;
             }
             desired.obj_ = expected.obj_;
-            desired.xlock_ = 1;
+            desired.sixlock_ = 1;
             if (lock_word_.compare_exchange_weak(expected.obj_, desired.obj_, std::memory_order_acquire)) {
                 return;
             }
@@ -220,6 +226,13 @@ class NodeMutex {
 
     void UnlockS() {
         lock_word_.fetch_sub(1, std::memory_order_release);
+    }
+
+    void UnlockSIX() {
+        LockWord desired;
+        desired.obj_ = lock_word_.load(std::memory_order_relaxed);
+        desired.sixlock_ = 0;
+        lock_word_.store(desired.obj_, std::memory_order_release);
     }
 
     void UnlockX() {
