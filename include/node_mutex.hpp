@@ -186,12 +186,12 @@ class NodeMutex {
         LockWord expected, desired;
         expected.obj_ = lock_word_.load(std::memory_order_acquire);
         while (true) {
-            if (expected.slock_ > 1) {
+            if (expected.slock_ > 0) {
                 expected.obj_ = lock_word_.load(std::memory_order_acquire);
                 continue;
             }
             desired.obj_ = expected.obj_;
-            desired.slock_ = 0;
+            desired.sixlock_ = 0;
             desired.xlock_ = 1;
             if (lock_word_.compare_exchange_weak(expected.obj_, desired.obj_, std::memory_order_acquire)) {
                 return;
@@ -203,7 +203,7 @@ class NodeMutex {
         LockWord expected, desired;
         expected.obj_ = lock_word_.load(std::memory_order_acquire);
         while (true) {
-            if (expected.slock_ > 1) {
+            if (expected.slock_ > 1 || expected.sixlock_) {
                 return false;
             }
             desired.obj_ = expected.obj_;

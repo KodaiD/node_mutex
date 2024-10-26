@@ -53,6 +53,7 @@ int main() {
 
     TestNodeMutex::TestUpgradeAndDowngrade();
     TestNodeMutex::TestGetVersionAndHasSameVersion();
+    TestNodeMutex::TestLockCompatibility();
 
     std::cout << "TEST PASSED." << std::endl;
 }

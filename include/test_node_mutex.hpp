@@ -169,4 +169,34 @@ class TestNodeMutex {
         lock_word.version_++;
         assert(mutex.HasSameVersion(lock_word.obj_));
     }
+
+    static void TestLockCompatibility() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        mutex.LockS();
+        assert(!mutex.TryLockX());
+        assert(mutex.TryLockSIX());
+        assert(mutex.TryLockS());
+        assert(!mutex.TryUpgradeFromSToX());
+        mutex.UnlockS();
+        mutex.UnlockSIX();
+        assert(mutex.TryUpgradeFromSToX());
+        mutex.UnlockX();
+
+        mutex.LockSIX();
+        assert(!mutex.TryLockX());
+        assert(!mutex.TryLockSIX());
+        assert(mutex.TryLockS());
+        mutex.UnlockS();
+        mutex.UpgradeToX();
+        mutex.DowngradeFromXToS();
+        mutex.UnlockS();
+
+        mutex.LockX();
+        assert(!mutex.TryLockX());
+        assert(!mutex.TryLockSIX());
+        assert(!mutex.TryLockS());
+        mutex.UnlockX();
+    }
 };
