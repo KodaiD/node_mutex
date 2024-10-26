@@ -11,29 +11,29 @@ int main() {
 
     mutex.UnlockX();
 
-    mutex.SLock();
+    mutex.LockS();
 
     if (mutex.TryLockX()) {
         exit(1);
     }
 
-    if (!mutex.TryUpgrade()) {
+    if (!mutex.TryUpgradeFromSToX()) {
         exit(1);
     }
 
     mutex.UnlockX();
 
-    mutex.SLock();
+    mutex.LockS();
 
-    mutex.SLock();
+    mutex.LockS();
 
-    if (mutex.TryUpgrade()) {
+    if (mutex.TryUpgradeFromSToX()) {
         exit(1);
     }
 
     mutex.UnlockS();
 
-    if (!mutex.TryUpgrade()) {
+    if (!mutex.TryUpgradeFromSToX()) {
         exit(1);
     }
 
