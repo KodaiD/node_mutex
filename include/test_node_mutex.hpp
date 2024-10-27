@@ -3,6 +3,8 @@
 #include "node_mutex.hpp"
 
 #include <cassert>
+#include <thread>
+#include <vector>
 
 class TestNodeMutex {
   public:
@@ -198,5 +200,57 @@ class TestNodeMutex {
         assert(!mutex.TryLockSIX());
         assert(!mutex.TryLockS());
         mutex.UnlockX();
+    }
+
+    static void TestParallelExecution(size_t num_threads) {
+        NodeMutex mutex;
+        std::vector<std::thread> threads;
+
+        for (int i = 0; i < num_threads; i++) {
+            threads.push_back(std::thread([&mutex]() {
+                mutex.LockS();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockS();
+           
+                mutex.LockSIX();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockSIX();
+            
+                mutex.LockX();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockX();
+            
+                while (!mutex.TryLockS()) ;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockS();
+            
+                while (!mutex.TryLockSIX()) ;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockSIX();
+            
+                while (!mutex.TryLockX()) ;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockX();
+            
+                mutex.LockS();
+                while (!mutex.TryUpgradeFromSToX()) ;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockX();
+            
+                mutex.LockSIX();
+                mutex.UpgradeToX();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockX();
+            
+                mutex.LockX();
+                mutex.DowngradeFromXToS();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                mutex.UnlockS();
+            }));
+        }
+
+        for (auto& thread : threads) {
+            thread.join();
+        }
     }
 };

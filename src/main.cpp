@@ -54,6 +54,7 @@ int main() {
     TestNodeMutex::TestUpgradeAndDowngrade();
     TestNodeMutex::TestGetVersionAndHasSameVersion();
     TestNodeMutex::TestLockCompatibility();
+    TestNodeMutex::TestParallelExecution(4);
 
     std::cout << "TEST PASSED." << std::endl;
 }
