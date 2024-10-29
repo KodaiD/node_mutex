@@ -5,6 +5,7 @@
 #include <cassert>
 #include <thread>
 #include <vector>
+#include <cstdio>
 
 class TestNodeMutex {
   public:
@@ -24,6 +25,8 @@ class TestNodeMutex {
         mutex.UnlockS();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.slock_ == 0);
+
+        printf("TestLockS passed\n");
     }
 
     static void TestLockSIX() {
@@ -36,6 +39,8 @@ class TestNodeMutex {
         mutex.UnlockSIX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.sixlock_ == 0);
+
+        printf("TestLockSIX passed\n");
     }
 
     static void TestLockX() {
@@ -48,6 +53,8 @@ class TestNodeMutex {
         mutex.UnlockX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.xlock_ == 0);
+
+        printf("TestLockX passed\n");
     }
 
     static void TestTryLockS() {
@@ -66,6 +73,8 @@ class TestNodeMutex {
         mutex.UnlockS();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.slock_ == 0);
+
+        printf("TestTryLockS passed\n");
     }
 
     static void TestTryLockSIX() {
@@ -78,6 +87,8 @@ class TestNodeMutex {
         mutex.UnlockSIX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.sixlock_ == 0);
+
+        printf("TestTryLockSIX passed\n");
     }
 
     static void TestTryLockX() {
@@ -90,6 +101,8 @@ class TestNodeMutex {
         mutex.UnlockX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.xlock_ == 0);
+
+        printf("TestTryLockX passed\n");
     }
 
     static void TestTryLockSwithVer() {
@@ -108,6 +121,8 @@ class TestNodeMutex {
         mutex.UnlockS();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.slock_ == 0);
+
+        printf("TestTryLockSwithVer passed\n");
     }
 
     static void TestTryLockSIXwithVer() {
@@ -120,6 +135,8 @@ class TestNodeMutex {
         mutex.UnlockSIX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.sixlock_ == 0);
+
+        printf("TestTryLockSIXwithVer passed\n");
     }
 
     static void TestTryLockXwithVer() {
@@ -132,6 +149,8 @@ class TestNodeMutex {
         mutex.UnlockX();
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.xlock_ == 0);
+
+        printf("TestTryLockXwithVer passed\n");
     }
 
     static void TestUpgradeAndDowngrade() {
@@ -151,6 +170,8 @@ class TestNodeMutex {
         lock_word.obj_ = mutex.lock_word_;
         assert(lock_word.slock_ == 1);
         mutex.UnlockS();
+
+        printf("TestUpgradeAndDowngrade passed\n");
     }
 
     static void TestGetVersionAndHasSameVersion() {
@@ -170,6 +191,8 @@ class TestNodeMutex {
         lock_word.obj_ = 0;
         lock_word.version_++;
         assert(mutex.HasSameVersion(lock_word.obj_));
+
+        printf("TestGetVersionAndHasSameVersion passed\n");
     }
 
     static void TestLockCompatibility() {
@@ -200,6 +223,8 @@ class TestNodeMutex {
         assert(!mutex.TryLockSIX());
         assert(!mutex.TryLockS());
         mutex.UnlockX();
+
+        printf("TestLockCompatibility passed\n");
     }
 
     static void TestParallelExecution(size_t num_threads) {
@@ -252,5 +277,7 @@ class TestNodeMutex {
         for (auto& thread : threads) {
             thread.join();
         }
+
+        printf("TestParallelExecution passed\n");
     }
 };
