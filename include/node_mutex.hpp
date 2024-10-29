@@ -244,7 +244,7 @@ class NodeMutex {
         return desired.obj_;
     }
 
-    uint64_t GetVersion() {
+    uint64_t GetVersion() const {
         LockWord expected;
         expected.obj_ = lock_word_.load(std::memory_order_acquire);
         while (expected.xlock_) {
@@ -255,7 +255,7 @@ class NodeMutex {
         return expected.obj_;
     }
 
-    bool HasSameVersion(uint64_t ver) {
+    bool HasSameVersion(uint64_t ver) const {
         LockWord desired;
         desired.obj_ = lock_word_.load(std::memory_order_acquire);
         desired.slock_ = 0;
