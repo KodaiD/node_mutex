@@ -235,12 +235,13 @@ class NodeMutex {
         lock_word_.store(desired.obj_, std::memory_order_release);
     }
 
-    void UnlockX() {
+    uint64_t UnlockX() {
         LockWord desired;
         desired.obj_ = lock_word_.load(std::memory_order_relaxed);
         desired.xlock_ = 0;
         desired.version_++;
         lock_word_.store(desired.obj_, std::memory_order_release);
+        return desired.obj_;
     }
 
     uint64_t GetVersion() {
