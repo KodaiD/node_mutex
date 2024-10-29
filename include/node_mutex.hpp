@@ -111,7 +111,11 @@ class NodeMutex {
         LockWord expected, desired;
         expected.obj_ = lock_word_.load(std::memory_order_acquire);
         while (true) {
-            if (expected.sixlock_ || expected.xlock_) {
+            if (expected.xlock_) {
+                expected.obj_ = lock_word_.load(std::memory_order_acquire);
+                continue;
+            }
+            if (expected.sixlock_) {
                 return false;
             }
             if (expected.slock_ > 0) {
@@ -168,7 +172,11 @@ class NodeMutex {
             if (expected.version_ != (ver >> 18)) {
                 return false;
             }
-            if (expected.sixlock_ || expected.xlock_) {
+            if (expected.xlock_) {
+                expected.obj_ = lock_word_.load(std::memory_order_acquire);
+                continue;
+            }
+            if (expected.sixlock_) {
                 return false;
             }
             if (expected.slock_ > 0) {

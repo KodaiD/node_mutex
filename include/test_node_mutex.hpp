@@ -219,7 +219,6 @@ class TestNodeMutex {
         mutex.UnlockS();
 
         mutex.LockX();
-        assert(!mutex.TryLockX());
         assert(!mutex.TryLockSIX());
         assert(!mutex.TryLockS());
         mutex.UnlockX();
