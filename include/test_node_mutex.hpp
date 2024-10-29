@@ -230,46 +230,47 @@ class TestNodeMutex {
     static void TestParallelExecution(size_t num_threads) {
         NodeMutex mutex;
         std::vector<std::thread> threads;
+        uint64_t counter = 0;
 
         for (int i = 0; i < num_threads; i++) {
-            threads.push_back(std::thread([&mutex]() {
+            threads.push_back(std::thread([&mutex, &counter]() {
                 mutex.LockS();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockS();
            
                 mutex.LockSIX();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockSIX();
             
                 mutex.LockX();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockX();
             
                 while (!mutex.TryLockS()) ;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockS();
             
                 while (!mutex.TryLockSIX()) ;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockSIX();
             
                 while (!mutex.TryLockX()) ;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockX();
             
                 mutex.LockS();
                 while (!mutex.TryUpgradeFromSToX()) ;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockX();
             
                 mutex.LockSIX();
                 mutex.UpgradeToX();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockX();
             
                 mutex.LockX();
                 mutex.DowngradeFromXToS();
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                counter++;
                 mutex.UnlockS();
             }));
         }
@@ -277,6 +278,8 @@ class TestNodeMutex {
         for (auto& thread : threads) {
             thread.join();
         }
+
+        assert(counter == num_threads * 9);
 
         printf("TestParallelExecution passed\n");
     }
