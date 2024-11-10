@@ -22,5 +22,7 @@ int main() {
     TestNodeMutex::TestLockCompatibility();
     TestNodeMutex::TestParallelExecution(4);
 
+    TestNodeMutex::TestTryLockXwithVer2();
+
     std::cout << "TEST PASSED." << std::endl;
 }

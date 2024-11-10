@@ -27,6 +27,15 @@ class NodeMutex {
     std::atomic<uint64_t> lock_word_;
 
   public:
+    enum class LockStatus {
+        SUCCESS,
+        VERSION_CHANGED,
+        SHLOCKED,
+        SIXLOCKED,
+        XLOCKED,
+        UNLOCKED
+    };
+
     NodeMutex() : lock_word_{0} {}
 
     void LockS() {
@@ -186,6 +195,31 @@ class NodeMutex {
             desired.xlock_ = 1;
             if (lock_word_.compare_exchange_weak(expected.obj_, desired.obj_, std::memory_order_acquire)) {
                 return true;
+            }
+        }
+    }
+
+    LockStatus TryLockXwithVer(uint64_t ver) {
+        LockWord expected, desired;
+        expected.obj_ = lock_word_.load(std::memory_order_acquire);
+        while (true) {
+            if (expected.version_ != (ver >> 18)) {
+                return LockStatus::VERSION_CHANGED;
+            }
+            if (expected.xlock_) {
+                expected.obj_ = lock_word_.load(std::memory_order_acquire);
+                continue;
+            }
+            if (expected.sixlock_) {
+                return LockStatus::SIXLOCKED;
+            }
+            if (expected.slock_ > 0) {
+                return LockStatus::SHLOCKED;
+            }
+            desired.obj_ = expected.obj_;
+            desired.xlock_ = 1;
+            if (lock_word_.compare_exchange_weak(expected.obj_, desired.obj_, std::memory_order_acquire)) {
+                return LockStatus::SUCCESS;
             }
         }
     }

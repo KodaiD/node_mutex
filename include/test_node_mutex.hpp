@@ -282,4 +282,35 @@ class TestNodeMutex {
 
         printf("TestParallelExecution passed\n");
     }
+
+    static void TestTryLockXwithVer2() {
+        NodeMutex mutex;
+        NodeMutex::LockWord lock_word;
+
+        auto status = mutex.TryLockXwithVer(lock_word.obj_);
+        assert(status == NodeMutex::LockStatus::SUCCESS);
+        lock_word.obj_ = mutex.lock_word_;
+        assert(lock_word.xlock_ == 1);
+        mutex.UnlockX();
+
+        lock_word.obj_ = mutex.lock_word_;
+        mutex.LockS();
+        status = mutex.TryLockXwithVer(lock_word.obj_);
+        assert(status == NodeMutex::LockStatus::SHLOCKED);
+        mutex.UnlockS();
+
+        lock_word.obj_ = mutex.lock_word_;
+        mutex.LockSIX();
+        status = mutex.TryLockXwithVer(lock_word.obj_);
+        assert(status == NodeMutex::LockStatus::SIXLOCKED);
+        mutex.UnlockSIX();
+
+        lock_word.obj_ = mutex.lock_word_;
+        mutex.LockX();
+        mutex.UnlockX();
+        status = mutex.TryLockXwithVer(lock_word.obj_);
+        assert(status == NodeMutex::LockStatus::VERSION_CHANGED);
+
+        printf("TestTryLockXwithVer2 passed\n");
+    }
 };
